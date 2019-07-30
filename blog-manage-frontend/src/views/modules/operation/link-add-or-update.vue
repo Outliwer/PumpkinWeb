@@ -85,9 +85,9 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.dataForm = data.link
-              this.imageUrl = data.link.avatar
+            if (data && data.success) {
+              this.dataForm = data.result
+              this.imageUrl = data.result.avatar
             }
           })
         } else {
@@ -102,11 +102,11 @@ export default {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl(`/admin/operation/link/${!this.dataForm.id ? 'save' : 'update'}`),
-            method: !this.dataForm.id ? 'post' : 'put',
+            method: 'post',
             data: this.$http.adornData(this.dataForm)
           }).then(({data}) => {
             this.confirmButtonDisabled = true
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message({
                 message: '操作成功',
                 type: 'success',
@@ -117,15 +117,15 @@ export default {
                 }
               })
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         }
       })
     },
     handleAvatarSuccess (response) {
-      if (response && response.code === 200) {
-        this.dataForm.avatar = response.resource.url
+      if (response && response.success) {
+        this.dataForm.avatar = response.result.url
         this.imageUrl = this.dataForm.avatar
         this.$message.success('上传成功！')
       }

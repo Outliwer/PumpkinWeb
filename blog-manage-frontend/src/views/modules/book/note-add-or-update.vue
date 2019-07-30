@@ -153,14 +153,15 @@ export default {
   },
   methods: {
     init () {
+      this.url = this.$http.adornUrl(`/admin/oss/resource/upload?token=${this.$cookie.get('token')}`)
       // 获取笔记分类
       this.$http({
         url: this.$http.adornUrl('/admin/operation/category/list'),
-        method: 'get',
-        params: this.$http.adornParams({type: 1})
+        method: 'post',
+        data: this.$http.adornData({type: 1})
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.categoryOptions = treeDataTranslate(data.categoryList)
+        if (data && data.success) {
+          this.categoryOptions = treeDataTranslate(data.result)
         }
       }).then(() => {
         this.$http({
@@ -168,8 +169,8 @@ export default {
           method: 'get',
           params: this.$http.adornParams({type: 2})
         }).then(({data}) => {
-          if (data && data.code === 200) {
-            this.tagList = data.tagList
+          if (data && data.success) {
+            this.tagList = data.result
           }
         })
       }).then(() => {
@@ -178,12 +179,11 @@ export default {
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          if (data && data.code === 200) {
-            this.bookList = data.bookList
+          if (data && data.success) {
+            this.bookList = data.result
           }
         })
       }).then(() => {
-        this.url = this.$http.adornUrl(`/admin/oss/resource/upload?token=${this.$cookie.get('token')}`)
         let id = this.$route.params.id
         if (id) {
           this.$http({
@@ -191,9 +191,9 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.bookNote = data.bookNote
-              this.file = [{url: data.bookNote.cover}]
+            if (data && data.success) {
+              this.bookNote = data.result
+              this.file = [{url: data.result.cover}]
               // 转换tagList
               this.tagListSelect = this.bookNote.tagList.map(tag => {
                 return tag.id
@@ -232,9 +232,9 @@ export default {
     },
     // 上传成功
     successHandle (response) {
-      if (response && response.code === 200) {
-        this.bookNote.cover = response.resource.url
-        this.file = [response.resource]
+      if (response && response.success) {
+        this.bookNote.cover = response.result.url
+        this.file = [response.result]
         this.$message.success('上传成功！')
       }
     },
@@ -251,17 +251,17 @@ export default {
           this.bookNote.categoryId = this.categoryOptionsSelect.join(',')
           this.$http({
             url: this.$http.adornUrl(`/admin/book/note/${!this.bookNote.id ? 'save' : 'update'}`),
-            method: !this.bookNote.id ? 'post' : 'put',
+            method: 'post',
             data: this.$http.adornData(this.bookNote)
           }).then(({data}) => {
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message.success('保存笔记成功')
               // 关闭当前标签
               this.$emit('closeCurrentTabs')
               // 跳转到list
               this.$router.push('/book-note')
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         } else {

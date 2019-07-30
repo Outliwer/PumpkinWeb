@@ -17,7 +17,7 @@
                 <p class="title">{{ book.title }}</p>
                 <p class="desc"><span>作者：</span>{{ book.author }}</p>
                 <p class="desc"><span>出版社：</span>{{ book.publisher }}</p>
-                <p class="desc"><span>出版日期：</span>{{ book.publishDate }}</p>
+                <p class="desc"><span>出版日期：</span>{{ book.publishDate | socialDate}}</p>
                 <p class="desc"><span>页数：</span>{{ book.pageNum }}</p>
                 <p class="desc"><span>评分：</span>
                   <iv-rate v-model="book.grade" disabled :allowHalf="true"></iv-rate>
@@ -53,7 +53,7 @@
               </v-tab>
             </vue-tabs>
           </div>
-          <social-section  :likeNum="book.likeNum" ></social-section>
+          <article-page-footer :likeNum="book.likeNum" :commentList="book.commentList"></article-page-footer>
         </div>
       </iv-col>
       <iv-col :xs="0" :sm="0" :md="0" :lg="7">
@@ -75,6 +75,8 @@ import BookCatalog from '@/components/views/Book/BookCatalog'
 import Recommend from '@/components/views/Recommend'
 import SocialSection from '@/components/views/Comment/SocialSection'
 import SideToc from '@/components/views/SideToc'
+import ArticlePageFooter from '@/components/views/Article/ArticlePageFooter'
+
 // mixin
 import {mixin} from '@/utils'
 
@@ -92,7 +94,8 @@ export default {
     'book-catalog': BookCatalog,
     'social-section': SocialSection,
     'recommend': Recommend,
-    'side-toc': SideToc
+    'side-toc': SideToc,
+    'article-page-footer': ArticlePageFooter
   },
   created () {
     this.getBook(this.$route.params.bookId)
@@ -104,8 +107,8 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.book = data.book
+        if (data && data.success) {
+          this.book = data.result
         }
       })
     }

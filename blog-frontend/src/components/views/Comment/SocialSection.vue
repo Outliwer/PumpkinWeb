@@ -1,19 +1,23 @@
 <template>
   <div class="social-section">
-    <div class="content">
-      <div class="likes">
-        <a  v-for="comment in commentList" :key="comment.id"><img src="../../../assets/avatar.png" alt=""></a>
-      </div>
-    </div>
+<!--    <div class="content">-->
+<!--      <div class="likes">-->
+<!--        <a  v-for="comment in commentList" :key="comment.id"><img src="../../../assets/avatar.png" alt=""></a>-->
+<!--      </div>-->
+<!--    </div>-->
 
     <div class="comment-area">
       <div class="editor" :class="{spread: spreadEditor}">
         <mavon-editor :theme="theme" @valueChanged="valueChanged"></mavon-editor>
       </div>
     </div>
-
+    &nbsp;
     <div class="comment-list">
       <comment-cell-list :theme="theme" :comment="comment" v-for="comment in commentList" :key="comment.id" ></comment-cell-list>
+    </div>
+    &nbsp;
+    <div>
+      <common-footer></common-footer>
     </div>
     <!--<browse-more></browse-more>-->
   </div>
@@ -23,6 +27,7 @@
 import MavonEditor from '@/components/views/MavonEditor'
 import CommentListCell from '@/components/views/Comment/CommentListCell'
 import BrowseMore from '@/components/views/BrowseMore'
+import CommonFooter from '@/components/footer/CommonFooter'
 
 export default {
   props: {
@@ -45,7 +50,8 @@ export default {
   components: {
     'mavon-editor': MavonEditor,
     'comment-cell-list': CommentListCell,
-    'browse-more': BrowseMore
+    'browse-more': BrowseMore,
+    'common-footer': CommonFooter
   },
   methods: {
     valueChanged (flag) {
@@ -89,7 +95,6 @@ export default {
     .comment-area
       .editor
         margin 15px 0 10px
-        height 200px
         transition height 0.7s
         &.spread
           height 450px

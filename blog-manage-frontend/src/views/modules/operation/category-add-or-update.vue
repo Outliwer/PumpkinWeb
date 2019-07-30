@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.categoryId ? '新增' : '修改'"
+    :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
@@ -89,7 +89,8 @@ export default {
   },
   methods: {
     init (id) {
-      this.dataForm.id = id || ''
+      this.dataForm.id = id
+      console.log(this.dataForm.id)
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
@@ -100,8 +101,8 @@ export default {
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          if (data && data.code === 200) {
-            this.dataForm = data.category
+          if (data && data.success) {
+            this.dataForm = data.result
           }
         }).then(() => {
           this.$http({
@@ -109,8 +110,8 @@ export default {
             method: 'get',
             params: this.$http.adornParams({type: this.dataForm.type})
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.categoryList = treeDataTranslate(data.categoryList)
+            if (data && data.success) {
+              this.categoryList = treeDataTranslate(data.result)
               this.categoryListTreeSetCurrentNode()
             } else {
               this.categoryList = []
@@ -133,8 +134,8 @@ export default {
         method: 'get',
         params: this.$http.adornParams({type: this.dataForm.type})
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.categoryList = treeDataTranslate(data.categoryList)
+        if (data && data.success) {
+          this.categoryList = treeDataTranslate(data.result)
         } else {
           this.categoryList = []
         }
@@ -145,17 +146,17 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.$http({
-            url: this.$http.adornUrl(`/admin/operation/category/${!this.dataForm.categoryId ? 'save' : 'update'}`),
+            url: this.$http.adornUrl(`/admin/operation/category/${!this.dataForm.id ? 'save' : 'update'}`),
             method: 'post',
             data: this.$http.adornData({
-              'id': this.dataForm.categoryId || undefined,
+              'id': this.dataForm.id || undefined,
               'name': this.dataForm.name,
               'type': this.dataForm.type,
               'rank': this.dataForm.rank,
               'parentId': this.dataForm.parentId
             })
           }).then(({data}) => {
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message({
                 message: '操作成功',
                 type: 'success',
@@ -166,7 +167,7 @@ export default {
                 }
               })
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         }

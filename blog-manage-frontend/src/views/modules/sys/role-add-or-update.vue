@@ -60,7 +60,7 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        this.menuList = treeDataTranslate(data, 'menuId')
+        this.menuList = treeDataTranslate(data.result, 'menuId')
       }).then(() => {
         this.visible = true
         this.$nextTick(() => {
@@ -74,14 +74,14 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.dataForm.roleName = data.role.roleName
-              this.dataForm.remark = data.role.remark
-              var idx = data.role.menuIdList.indexOf(this.tempKey)
+            if (data && data.success) {
+              this.dataForm.roleName = data.result.roleName
+              this.dataForm.remark = data.result.remark
+              var idx = data.result.menuIdList.indexOf(this.tempKey)
               if (idx !== -1) {
-                data.role.menuIdList.splice(idx, data.role.menuIdList.length - idx)
+                data.result.menuIdList.splice(idx, data.result.menuIdList.length - idx)
               }
-              this.$refs.menuListTree.setCheckedKeys(data.role.menuIdList)
+              this.$refs.menuListTree.setCheckedKeys(data.result.menuIdList)
             }
           })
         }
@@ -93,7 +93,7 @@ export default {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl(`/admin/sys/role/${!this.dataForm.id ? 'save' : 'update'}`),
-            method: !this.dataForm.id ? 'post' : 'put',
+            method: 'post',
             data: this.$http.adornData({
               'roleId': this.dataForm.id || undefined,
               'roleName': this.dataForm.roleName,
@@ -101,7 +101,7 @@ export default {
               'menuIdList': [].concat(this.$refs.menuListTree.getCheckedKeys(), [this.tempKey], this.$refs.menuListTree.getHalfCheckedKeys())
             })
           }).then(({data}) => {
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message({
                 message: '操作成功',
                 type: 'success',

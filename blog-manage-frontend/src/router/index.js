@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import http from '@/utils/httpRequest'
 import { isURL } from '@/utils/validate'
-import {clearLoginInfo} from '@/utils'
+import { clearLoginInfo } from '@/utils'
 
 Vue.use(Router)
 
@@ -29,7 +29,8 @@ const mainRoutes = {
     // 提示: 如需要通过iframe嵌套展示内容, 但不通过tab打开, 请自行创建组件使用iframe处理!
     { path: '/home', component: _import('common/home'), name: 'home', meta: { title: '首页' } },
     { path: '/theme', component: _import('common/theme'), name: 'theme', meta: { title: '主题' } },
-    { path: '/article/article/update/:id',
+    {
+      path: '/article/article/update/:id',
       component: _import('modules/article/article-add-or-update'),
       name: 'article-update',
       meta: {
@@ -38,7 +39,8 @@ const mainRoutes = {
         isTab: true
       }
     },
-    { path: '/book/book/update/:id',
+    {
+      path: '/book/book/update/:id',
       component: _import('modules/book/book-add-or-update'),
       name: 'book-update',
       meta: {
@@ -47,7 +49,8 @@ const mainRoutes = {
         isTab: true
       }
     },
-    { path: '/book/note/update/:id',
+    {
+      path: '/book/note/update/:id',
       component: _import('modules/book/note-add-or-update'),
       name: 'book-note-update',
       meta: {
@@ -79,16 +82,16 @@ router.beforeEach((to, from, next) => {
     next()
   } else {
     http({
-      url: http.adornUrl('/admin/sys/menu/nav'),
-      method: 'get',
-      params: http.adornParams()
-    }).then(({data}) => {
-      if (data && data.code === 200) {
-        fnAddDynamicMenuRoutes(data.menuList)
+      url: http.adornUrl('/menu/nav'),
+      method: 'post',
+      data: http.adornData()
+    }).then(({ data }) => {
+      if (data && data.success) {
+        fnAddDynamicMenuRoutes(data.result.menuList)
         router.options.isAddDynamicMenuRoutes = true
-        sessionStorage.setItem('menuList', JSON.stringify(data.menuList || []))
-        sessionStorage.setItem('permissions', JSON.stringify(data.permissions || []))
-        next({...to, replace: false}) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+        sessionStorage.setItem('menuList', JSON.stringify(data.result.menuList || []))
+        sessionStorage.setItem('permissions', JSON.stringify(data.result.permissions || []))
+        next({ ...to, replace: false }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
       } else {
         sessionStorage.setItem('menuList', '[]')
         sessionStorage.setItem('permissions', '[]')
@@ -144,7 +147,8 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
         try {
           // 会同时获取子组件
           route['component'] = _import(`modules/${menuList[i].url}`) || null
-        } catch (e) {}
+        } catch (e) {
+        }
       }
       routes.push(route)
     }

@@ -112,7 +112,7 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        this.roleList = data && data.code === 200 ? data.list : []
+        this.roleList = data && data.success ? data.result : []
       }).then(() => {
         this.visible = true
         this.$nextTick(() => {
@@ -125,12 +125,12 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.dataForm.userName = data.user.username
-              this.dataForm.salt = data.user.salt
-              this.dataForm.email = data.user.email
-              this.dataForm.roleIdList = data.user.roleIdList
-              this.dataForm.status = data.user.status
+            if (data && data.success) {
+              this.dataForm.userName = data.result.username
+              this.dataForm.salt = data.result.salt
+              this.dataForm.email = data.result.email
+              this.dataForm.roleIdList = data.result.list
+              this.dataForm.status = data.result.status
             }
           })
         }
@@ -151,10 +151,10 @@ export default {
               'email': this.dataForm.email,
               'mobile': this.dataForm.mobile,
               'status': this.dataForm.status,
-              'roleIdList': this.dataForm.roleIdList
+              'list': this.dataForm.roleIdList
             })
           }).then(({data}) => {
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message({
                 message: '操作成功',
                 type: 'success',
@@ -165,7 +165,7 @@ export default {
                 }
               })
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         }

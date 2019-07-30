@@ -44,8 +44,7 @@ let router = new Router({
           name: 'article',
           components: {
             header: SimpleHeader,
-            content: ArticleContent,
-            footer: CommonFooter
+            content: ArticleContent
           }
         },
         {
@@ -80,8 +79,7 @@ let router = new Router({
           name: 'bookNote',
           components: {
             header: SimpleHeader,
-            content: BookNoteContent,
-            footer: CommonFooter
+            content: BookNoteContent
           }
         },
         {
@@ -98,8 +96,7 @@ let router = new Router({
           name: 'book',
           components: {
             header: SimpleHeader,
-            content: BookContent,
-            footer: CommonFooter
+            content: BookContent
           }
         },
         {

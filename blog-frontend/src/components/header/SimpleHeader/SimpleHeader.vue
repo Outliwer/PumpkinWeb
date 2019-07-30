@@ -9,9 +9,9 @@
     <transition name="slide-fade">
       <div id="header"  v-show="show">
     <router-link id="logo" to="/">
-      <img src="../../../assets/logo.png">
-      <span class="title">DB's Blog</span>
-      <span class="motto">success belongs to the persevering</span>
+<!--      <img src="../../../assets/logo.png">-->
+      <span class="title">竹马的博客</span>
+<!--      <span class="motto">success belongs to the persevering</span>-->
     </router-link>
     <ul id="nav">
       <li>
@@ -102,11 +102,11 @@ export default {
     listCategory () {
       this.$http({
         url: this.$http.adornUrl('/operation/categories'),
-        method: 'get',
-        params: this.$http.adornParams()
+        method: 'post',
+        data: this.$http.adornData()
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          data.categoryList.forEach(category => {
+        if (data && data.success) {
+          data.result.forEach(category => {
             if (category.type === 0) {
               this.articleCategoryList.push(category)
             } else if (category.type === 1) {

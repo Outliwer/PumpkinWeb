@@ -131,7 +131,7 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        this.menuList = treeDataTranslate(data.menuList, 'menuId')
+        this.menuList = treeDataTranslate(data.result, 'menuId')
       }).then(() => {
         this.visible = true
         this.$nextTick(() => {
@@ -148,14 +148,14 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            this.dataForm.id = data.menu.menuId
-            this.dataForm.type = data.menu.type
-            this.dataForm.name = data.menu.name
-            this.dataForm.parentId = data.menu.parentId
-            this.dataForm.url = data.menu.url
-            this.dataForm.perms = data.menu.perms
-            this.dataForm.orderNum = data.menu.orderNum
-            this.dataForm.icon = data.menu.icon
+            this.dataForm.id = data.result.menuId
+            this.dataForm.type = data.result.type
+            this.dataForm.name = data.result.name
+            this.dataForm.parentId = data.result.parentId
+            this.dataForm.url = data.result.url
+            this.dataForm.perms = data.result.perms
+            this.dataForm.orderNum = data.result.orderNum
+            this.dataForm.icon = data.result.icon
             this.menuListTreeSetCurrentNode()
           })
         }
@@ -181,7 +181,7 @@ export default {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl(`/admin/sys/menu/${!this.dataForm.id ? 'save' : 'update'}`),
-            method: !this.dataForm.id ? 'post' : 'put',
+            method: 'post',
             data: this.$http.adornData({
               'menuId': this.dataForm.id || undefined,
               'type': this.dataForm.type,
@@ -193,7 +193,7 @@ export default {
               'icon': this.dataForm.icon
             })
           }).then(({data}) => {
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message({
                 message: '操作成功',
                 type: 'success',

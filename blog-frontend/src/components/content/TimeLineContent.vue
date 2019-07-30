@@ -54,8 +54,8 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.timelineList = data.timelineList
+        if (data && data.success) {
+          this.timelineList = data.result
         }
       })
     },

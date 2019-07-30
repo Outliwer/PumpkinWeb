@@ -140,17 +140,17 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/admin/sys/param/list'),
-        method: 'get',
-        params: this.$http.adornParams({
-          'page': this.pageIndex,
-          'limit': this.pageSize,
+        method: 'post',
+        data: this.$http.adornData({
+          'pageIndex': this.pageIndex,
+          'pageSize': this.pageSize,
           'menuUrl': this.dataForm.menuUrl,
           'type': this.dataForm.type
         })
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.dataList = data.page.list
-          this.totalPage = data.page.totalCount
+        if (data && data.success) {
+          this.dataList = data.result.paramList
+          this.totalPage = data.result.totalCount
         } else {
           this.dataList = []
           this.totalPage = 0
@@ -192,10 +192,10 @@ export default {
       }).then(() => {
         this.$http({
           url: this.$http.adornUrl('/admin/sys/param/delete'),
-          method: 'delete',
+          method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({data}) => {
-          if (data && data.code === 200) {
+          if (data && data.success) {
             this.$message({
               message: '操作成功',
               type: 'success',
@@ -217,7 +217,7 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        this.menuList = treeDataTranslate(data.menuList, 'menuId')
+        this.menuList = treeDataTranslate(data.result, 'menuId')
       })
     },
     // 菜单树选中

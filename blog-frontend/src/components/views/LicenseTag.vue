@@ -1,8 +1,8 @@
 <template>
   <div class="license-tag">
     <a :href="link" target="_blank">
-      <span class="name">License</span>
-      <span class="type">{{type}}</span>
+<!--      <span class="name">License</span>-->
+<!--      <span class="type">{{type}}</span>-->
     </a>
   </div>
 </template>

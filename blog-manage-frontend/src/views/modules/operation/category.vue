@@ -47,12 +47,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="parentName"
-        header-align="center"
-        align="center"
-        label="上级级别">
-      </el-table-column>
-      <el-table-column
         fixed="right"
         header-align="center"
         align="center"
@@ -99,14 +93,14 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/admin/operation/category/list'),
-        method: 'get',
-        params: this.$http.adornParams({
+        method: 'post',
+        data: this.$http.adornData({
           name: this.dataForm.name,
           type: this.dataForm.type
         })
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.dataList = treeDataTranslate(data.categoryList)
+        if (data && data.success) {
+          this.dataList = treeDataTranslate(data.result)
         } else {
           this.dataList = []
         }
@@ -129,10 +123,10 @@ export default {
       }).then(() => {
         this.$http({
           url: this.$http.adornUrl('/admin/operation/category/delete/' + id),
-          method: 'delete',
+          method: 'post',
           data: this.$http.adornData()
         }).then(({data}) => {
-          if (data && data.code === 200) {
+          if (data && data.success) {
             this.$message({
               message: '操作成功',
               type: 'success',
@@ -142,7 +136,7 @@ export default {
               }
             })
           } else {
-            this.$message.error(data.msg)
+            this.$message.error(data.errorMsg)
           }
         })
       })

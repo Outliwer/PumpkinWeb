@@ -79,13 +79,13 @@ export default {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl('/admin/sys/user/password'),
-            method: 'put',
+            method: 'post',
             data: this.$http.adornData({
               'password': this.dataForm.password,
               'newPassword': this.dataForm.newPassword
             })
           }).then(({data}) => {
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message({
                 message: '操作成功',
                 type: 'success',

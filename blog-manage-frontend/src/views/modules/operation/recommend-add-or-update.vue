@@ -88,8 +88,8 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.dataForm = data.recommend
+            if (data && data.success) {
+              this.dataForm = data.result
             }
           })
         } else {
@@ -103,11 +103,11 @@ export default {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl(`/admin/operation/recommend/${!this.dataForm.id ? 'save' : 'update'}`),
-            method: !this.dataForm.id ? 'post' : 'put',
+            method: 'post',
             data: this.$http.adornData(this.dataForm)
           }).then(({data}) => {
             this.confirmButtonDisabled = true
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message({
                 message: '操作成功',
                 type: 'success',
@@ -118,7 +118,7 @@ export default {
                 }
               })
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         }
@@ -127,11 +127,11 @@ export default {
     listRecommend () {
       this.$http({
         url: this.$http.adornUrl(`/admin/operation/recommend/select`),
-        method: 'get',
-        params: this.$http.adornParams(this.listParams)
+        method: 'post',
+        data: this.$http.adornData(this.listParams)
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.recommendList = data.recommendList
+        if (data && data.success) {
+          this.recommendList = data.result
         }
       })
     },

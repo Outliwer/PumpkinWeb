@@ -41,8 +41,8 @@ export default {
         type: 'get',
         params: this.$http.adornParams({keywords: this.$route.query.keywords})
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.articleList = data.articleList
+        if (data && data.success) {
+          this.articleList = data.result
           if (this.articleList.length > 0) {
             this.articleList.map(article => {
               article.coverType = 2

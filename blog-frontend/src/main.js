@@ -5,6 +5,7 @@ import 'iview/dist/styles/iview.css'
 import '@/common/stylus/index.styl'
 import App from './App.vue'
 import httpRequest from '@/utils/httpRequest'
+import '@/element-ui'
 
 // iView UI 组件引入
 import {

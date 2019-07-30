@@ -2,7 +2,15 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
+        <el-select v-model="dataForm.type" clearable>
+          <el-option v-for="type in typeList"
+                     :key="type.parKey"
+                     :value="type.parKey"
+                     :label="type.parValue"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -76,7 +84,8 @@ export default {
   data () {
     return {
       dataForm: {
-        key: ''
+        name: '',
+        type: ''
       },
       dataList: [],
       pageIndex: 1,
@@ -84,7 +93,8 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      addOrUpdateVisible: false
+      addOrUpdateVisible: false,
+      typeList: this.getSysParamArr('MODULE_TYPE')
     }
   },
   components: {
@@ -99,16 +109,17 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/admin/operation/tag/list'),
-        method: 'get',
-        params: this.$http.adornParams({
-          'page': this.pageIndex,
-          'limit': this.pageSize,
-          'key': this.dataForm.key
+        method: 'post',
+        data: this.$http.adornData({
+          'pageIndex': this.pageIndex,
+          'pageSize': this.pageSize,
+          'name': this.dataForm.name,
+          'type': this.dataForm.type
         })
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.dataList = data.page.list
-          this.totalPage = data.page.totalCount
+        if (data && data.success) {
+          this.dataList = data.result.tagList
+          this.totalPage = data.result.totalCount
         } else {
           this.dataList = []
           this.totalPage = 0
@@ -150,10 +161,10 @@ export default {
       }).then(() => {
         this.$http({
           url: this.$http.adornUrl('/admin/operation/tag/delete'),
-          method: 'delete',
+          method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({data}) => {
-          if (data && data.code === 200) {
+          if (data && data.success) {
             this.$message({
               message: '操作成功',
               type: 'success',
@@ -163,7 +174,7 @@ export default {
               }
             })
           } else {
-            this.$message.error(data.msg)
+            this.$message.error(data.errorMsg)
           }
         })
       })

@@ -155,14 +155,15 @@ export default {
   },
   methods: {
     init () {
+      this.url = this.$http.adornUrl(`/admin/oss/resource/upload?token=${this.$cookie.get('token')}`)
       // 获取图书分类
       this.$http({
         url: this.$http.adornUrl('/admin/operation/category/list'),
-        method: 'get',
-        params: this.$http.adornParams({type: 1})
+        method: 'post',
+        data: this.$http.adornData({type: 1})
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.categoryOptions = treeDataTranslate(data.categoryList)
+        if (data && data.success) {
+          this.categoryOptions = treeDataTranslate(data.result)
         }
       }).then(() => {
         this.$http({
@@ -170,12 +171,11 @@ export default {
           method: 'get',
           params: this.$http.adornParams({type: 1})
         }).then(({data}) => {
-          if (data && data.code === 200) {
-            this.tagList = data.tagList
+          if (data && data.success) {
+            this.tagList = data.result
           }
         })
       }).then(() => {
-        this.url = this.$http.adornUrl(`/admin/oss/resource/upload?token=${this.$cookie.get('token')}`)
         let id = this.$route.params.id
         if (id) {
           this.$http({
@@ -183,9 +183,9 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.book = data.book
-              this.file = [{url: data.book.cover}]
+            if (data && data.success) {
+              this.book = data.result
+              this.file = [{url: data.result.cover}]
               // 转换tagList
               this.tagListSelect = this.book.tagList.map(tag => {
                 return tag.id
@@ -224,9 +224,9 @@ export default {
     },
     // 上传成功
     successHandle (response) {
-      if (response && response.code === 200) {
-        this.book.cover = response.resource.url
-        this.file = [response.resource]
+      if (response && response.success) {
+        this.book.cover = response.result.url
+        this.file = [response.result]
         this.$message.success('上传成功！')
       }
     },
@@ -243,17 +243,17 @@ export default {
           this.book.categoryId = this.categoryOptionsSelect.join(',')
           this.$http({
             url: this.$http.adornUrl(`/admin/book/${!this.book.id ? 'save' : 'update'}`),
-            method: !this.book.id ? 'post' : 'put',
+            method: 'post',
             data: this.$http.adornData(this.book)
           }).then(({data}) => {
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message.success('保存图书成功')
               // 关闭当前标签
               this.$emit('closeCurrentTabs')
               // 跳转到list
               this.$router.push('/book-book')
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         } else {

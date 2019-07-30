@@ -60,8 +60,8 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.recommendList = data.recommendList
+        if (data && data.success) {
+          this.recommendList = data.result
           this.topRecommend = this.recommendList.shift()
         }
       })

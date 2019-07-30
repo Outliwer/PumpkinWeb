@@ -97,7 +97,7 @@ export default {
           method: 'post',
           data: this.$http.adornData()
         }).then(({data}) => {
-          if (data && data.code === 200) {
+          if (data && data.success) {
             clearLoginInfo()
             this.$router.push({ name: 'login' })
           }

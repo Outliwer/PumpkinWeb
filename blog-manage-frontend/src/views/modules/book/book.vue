@@ -195,16 +195,16 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/admin/book/list'),
-        method: 'get',
-        params: this.$http.adornParams({
-          'page': this.pageIndex,
-          'limit': this.pageSize,
+        method: 'post',
+        data: this.$http.adornData({
+          'pageIndex': this.pageIndex,
+          'pageSize': this.pageSize,
           'title': this.dataForm.title
         })
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.dataList = data.page.list
-          this.totalPage = data.page.totalCount
+        if (data && data.success) {
+          this.dataList = data.result.bookList
+          this.totalPage = data.result.totalCount
         } else {
           this.dataList = []
           this.totalPage = 0
@@ -243,10 +243,10 @@ export default {
       }).then(() => {
         this.$http({
           url: this.$http.adornUrl('/admin/book/delete'),
-          method: 'delete',
+          method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({data}) => {
-          if (data && data.code === 200) {
+          if (data && data.success) {
             this.$message({
               message: '操作成功',
               type: 'success',
@@ -256,7 +256,7 @@ export default {
               }
             })
           } else {
-            this.$message.error(data.msg)
+            this.$message.error(data.errorMsg)
           }
         })
       })
@@ -297,26 +297,26 @@ export default {
     updateStatus (data) {
       this.$http({
         url: this.$http.adornUrl(`/admin/book/update/status`),
-        method: 'put',
+        method: 'post',
         data: this.$http.adornData(data)
       }).then(({data}) => {
-        if (data && data.code === 200) {
+        if (data && data.success) {
           this.$message.success('更新成功')
           this.getDataList()
         } else {
-          this.$message.error(data.msg)
+          this.$message.error(data.errorMsg)
         }
       })
     },
-    // 更新读后感
+    // 获取读后感
     getReadSense (id) {
       this.$http({
         url: this.$http.adornUrl('/admin/book/sense/' + id),
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.bookSense = data.bookSense
+        if (data && data.success) {
+          this.bookSense = data.result
           this.bookSense.bookId = id
         }
       }).then(() => {
@@ -330,7 +330,7 @@ export default {
         method: !this.bookSense.id ? 'post' : 'put',
         data: this.$http.adornData(this.bookSense)
       }).then(({data}) => {
-        if (data && data.code === 200) {
+        if (data && data.success) {
           this.$message({
             message: '操作成功',
             type: 'success',
@@ -340,7 +340,7 @@ export default {
             }
           })
         } else {
-          this.$message.error(data.msg)
+          this.$message.error(data.errorMsg)
         }
       })
     }

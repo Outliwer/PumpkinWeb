@@ -55,22 +55,22 @@ export default {
     listArticle () {
       let params = {
         categoryId: this.categoryId,
-        limit: this.pageSize,
-        page: this.currentPage
+        pageSize: this.pageSize,
+        pageIndex: this.currentPage
       }
       params = merge(params, this.menuParams)
       this.$http({
         url: this.$http.adornUrl('/articles'),
-        params: this.$http.adornParams(params),
-        method: 'get'
+        data: this.$http.adornData(params),
+        method: 'post'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          if (data.page.totalPage <= data.page.currPage) {
+        if (data && data.success) {
+          if (data.result.totalPage <= data.result.currPage) {
             this.noMoreData = true
           } else {
             this.noMoreData = false
           }
-          this.articleList = data.page.list
+          this.articleList = data.result.list
         }
       })
     },
@@ -79,11 +79,11 @@ export default {
       params.type = 0
       this.$http({
         url: this.$http.adornUrl('/operation/categories'),
-        method: 'get',
-        params: this.$http.adornParams(params)
+        method: 'post',
+        data: this.$http.adornData(params)
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.categoryList = treeDataTranslate(data.categoryList)
+        if (data && data.success) {
+          this.categoryList = treeDataTranslate(data.result)
         }
       })
     },
@@ -104,17 +104,17 @@ export default {
       this.currentPage++
       let params = {
         categoryId: this.categoryId,
-        limit: this.pageSize,
-        page: this.currentPage
+        pageSize: this.pageSize,
+        pageIndex: this.currentPage
       }
       params = merge(params, this.menuParams)
       this.$http({
         url: this.$http.adornUrl('/articles'),
-        params: this.$http.adornParams(params),
-        method: 'get'
+        data: this.$http.adornData(params),
+        method: 'post'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          if (data.page.totalPage <= data.page.currPage) {
+        if (data && data.success) {
+          if (data.result.totalPage <= data.result.currPage) {
             this.noMoreData = true
           } else {
             this.noMoreData = false

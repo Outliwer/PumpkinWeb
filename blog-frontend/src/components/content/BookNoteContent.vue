@@ -8,7 +8,8 @@
             <article id="article-main-page" class="typo container" slot="content" ref="article" v-html="bookNote.contentFormat">
             </article>
           </bookNote-page-content>
-          <bookNote-page-footer :likeNum="bookNote.likeNum" :commentList="bookNote.commentList"></bookNote-page-footer>
+          <article-page-footer :likeNum="bookNote.likeNum" :commentList="bookNote.commentList"></article-page-footer>
+          <!--          <bookNote-page-footer :likeNum="bookNote.likeNum" :commentList="bookNote.commentList"></bookNote-page-footer>-->
         </div>
       </iv-col>
       <iv-col :xs="0" :sm="0" :md="0" :lg="7">
@@ -31,6 +32,8 @@ import FriendLinks from '@/components/views/FriendLinks'
 import SideToc from '@/components/views/SideToc'
 import Recommend from '@/components/views/Recommend'
 import TOC from '@/common/js/MarkdownToc'
+import ArticlePageFooter from '@/components/views/Article/ArticlePageFooter'
+
 // highlight.js引入
 import hljs from 'highlight.js'
 // 样式文件
@@ -53,6 +56,7 @@ export default {
     'about': About,
     'friend-links': FriendLinks,
     'side-toc': SideToc,
+    'article-page-footer': ArticlePageFooter,
     'recommend': Recommend
   },
   created: function () {
@@ -73,8 +77,8 @@ export default {
         url: this.$http.adornUrl('/bookNote/' + bookNoteId),
         method: 'get'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.bookNote = data.bookNote
+        if (data && data.result) {
+          this.bookNote = data.result
           // 更新目录、高亮代码
           this.$nextTick(function () {
             this.addCodeLineNumber()

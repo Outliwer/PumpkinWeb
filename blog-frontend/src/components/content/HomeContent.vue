@@ -3,15 +3,15 @@
     <iv-row>
       <iv-col :xs="24" :sm="24" :md="24" :lg="17" :xl="17">
         <div class="layout-left">
-          <section-title :mainTitle="'文章'" :subTitle="'Articles'" :tipText="'View More'" :tipHref="'/articles'">
+          <section-title :mainTitle="'文章'" :tipText="'View More'" :tipHref="'/articles'">
             <title-menu-filter @filterByMenu="refreshArticle"  slot="menu" :menu-filter-list="defaultFilterList"></title-menu-filter>
           </section-title>
           <article-list-cell v-for="article in articleList" :article="article" :key="article.title" :type="'article'"></article-list-cell>
-          <section-title :mainTitle="'阅读'" :subTitle="'Books'" :tipText="'View More'" :tipHref="'/books'">
+          <section-title :mainTitle="'阅读'" :tipText="'View More'" :tipHref="'/books'">
             <title-menu-filter @filterByMenu="refreshBook"  slot="menu"></title-menu-filter>
           </section-title>
           <book-list-cell v-for="book in bookList" :book="book" :key="book.title" :type="'book'"></book-list-cell>
-          <section-title :mainTitle="'笔记'" :subTitle="'Notes'" :tipText="'View More'" :tipHref="'/bookNotes'">
+          <section-title :mainTitle="'笔记'" :tipText="'View More'" :tipHref="'/bookNotes'">
             <title-menu-filter @filterByMenu="refreshBookNote"  slot="menu" :menu-filter-list="bookNoteFilterList"></title-menu-filter>
           </section-title>
           <book-note-list-cell v-for="bookNote in bookNoteList" :bookNote="bookNote" :key="bookNote.title"></book-note-list-cell>
@@ -56,8 +56,8 @@ export default {
       bookList: [],
       defaultFilterList: DefaultFilterList,
       pageParam: {
-        page: 1,
-        limit: DefaultLimitSize
+        pageIndex: 1,
+        pageSize: DefaultLimitSize
       },
       bookNoteFilterList: JSON.parse(JSON.stringify(DefaultFilterList))
     }
@@ -91,11 +91,11 @@ export default {
       let params = merge(param, this.pageParam)
       this.$http({
         url: this.$http.adornUrl('/articles'),
-        params: this.$http.adornParams(params),
-        method: 'get'
+        data: this.$http.adornData(params),
+        method: 'post'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.articleList = data.page.list
+        if (data && data.success) {
+          this.articleList = data.result.list
         }
       })
     },
@@ -103,11 +103,11 @@ export default {
       let params = merge(param, this.pageParam)
       this.$http({
         url: this.$http.adornUrl('/books'),
-        params: this.$http.adornParams(params),
-        method: 'get'
+        data: this.$http.adornData(params),
+        method: 'post'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.bookList = data.page.list
+        if (data && data.success) {
+          this.bookList = data.result
           this.bookList.forEach(book => {
             book.coverType = 2
           })
@@ -118,11 +118,11 @@ export default {
       let params = merge(param, this.pageParam)
       this.$http({
         url: this.$http.adornUrl('/bookNotes'),
-        params: this.$http.adornParams(params),
-        method: 'get'
+        data: this.$http.adornData(params),
+        method: 'post'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.bookNoteList = data.page.list
+        if (data && data.success) {
+          this.bookNoteList = data.result.list
         }
       })
     }

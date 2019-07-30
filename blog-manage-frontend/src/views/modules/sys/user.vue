@@ -39,13 +39,8 @@
         prop="email"
         header-align="center"
         align="center"
+        width="170"
         label="邮箱">
-      </el-table-column>
-      <el-table-column
-        prop="mobile"
-        header-align="center"
-        align="center"
-        label="手机号">
       </el-table-column>
       <el-table-column
         prop="status"
@@ -60,9 +55,18 @@
       <el-table-column
         prop="createTime"
         header-align="center"
+        :formatter="this.createDateFormat"
         align="center"
         width="180"
         label="创建时间">
+      </el-table-column>
+      <el-table-column
+        prop="updateTime"
+        header-align="center"
+        :formatter="this.updateDateFormat"
+        width="180"
+        align="center"
+        label="更新时间">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -92,6 +96,7 @@
 
 <script>
 import AddOrUpdate from './user-add-or-update'
+import { dateFormat } from '@/utils'
 export default {
   data () {
     return {
@@ -119,16 +124,16 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/admin/sys/user/list'),
-        method: 'get',
-        params: this.$http.adornParams({
-          'page': this.pageIndex,
-          'limit': this.pageSize,
-          'username': this.dataForm.userName
+        method: 'post',
+        data: this.$http.adornData({
+          'pageIndex': this.pageIndex,
+          'pageSize': this.pageSize,
+          'userName': this.dataForm.userName
         })
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.dataList = data.page.list
-          this.totalPage = data.page.totalCount
+        if (data && data.success) {
+          this.dataList = data.result.userList
+          this.totalPage = data.result.totalCount
         } else {
           this.dataList = []
           this.totalPage = 0
@@ -150,6 +155,12 @@ export default {
     // 多选
     selectionChangeHandle (val) {
       this.dataListSelections = val
+    },
+    createDateFormat (row, column) {
+      return dateFormat(row.createTime)
+    },
+    updateDateFormat (row, column) {
+      return dateFormat(row.updateTime)
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {

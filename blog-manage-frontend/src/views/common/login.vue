@@ -73,18 +73,18 @@ export default {
             url: this.$http.adornUrl('/admin/sys/login'),
             method: 'post',
             data: this.$http.adornData({
-              'username': this.dataForm.userName,
+              'userName': this.dataForm.userName,
               'password': this.dataForm.password,
               'uuid': this.dataForm.uuid,
               'captcha': this.dataForm.captcha
             })
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.$cookie.set('token', data.token)
+            if (data && data.success) {
+              this.$cookie.set('token', data.result.token)
               this.$router.replace({ name: 'home' })
             } else {
               this.getCaptcha()
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         }

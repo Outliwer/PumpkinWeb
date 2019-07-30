@@ -117,7 +117,7 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        this.dataList = treeDataTranslate(data, 'menuId')
+        this.dataList = treeDataTranslate(data.result, 'menuId')
         this.dataListLoading = false
       })
     },
@@ -137,10 +137,10 @@ export default {
       }).then(() => {
         this.$http({
           url: this.$http.adornUrl(`/admin/sys/menu/delete/${id}`),
-          method: 'delete',
+          method: 'get',
           data: this.$http.adornData()
         }).then(({data}) => {
-          if (data && data.code === 200) {
+          if (data && data.success) {
             this.$message({
               message: '操作成功',
               type: 'success',

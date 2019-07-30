@@ -22,6 +22,12 @@
       <el-form-item label="评论层级" prop="commentLevel">
         <el-input v-model="dataForm.commentLevel" placeholder="评论层级"></el-input>
       </el-form-item>
+      <el-form-item label="评论类别" prop="type">
+        <el-input v-model="dataForm.type" placeholder="评论类别"></el-input>
+      </el-form-item>
+      <el-form-item label="评论文章id" prop="linkId">
+        <el-input v-model="dataForm.linkId" placeholder="评论文章id"></el-input>
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -53,8 +59,8 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.dataForm = data.comment
+            if (data && data.success) {
+              this.dataForm = data.result
             }
           })
         } else {
@@ -68,11 +74,11 @@ export default {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl(`/admin/comment/${!this.dataForm.id ? 'save' : 'update'}`),
-            method: !this.dataForm.id ? 'post' : 'put',
+            method: 'post',
             data: this.$http.adornData(this.dataForm)
           }).then(({data}) => {
             this.confirmButtonDisabled = true
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message({
                 message: '操作成功',
                 type: 'success',
@@ -83,7 +89,7 @@ export default {
                 }
               })
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         }

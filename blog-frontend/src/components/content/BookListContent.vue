@@ -75,17 +75,17 @@ export default {
     listBook () {
       let params = {
         categoryId: this.categoryId,
-        limit: this.pageSize,
-        page: 1
+        pageSize: this.pageSize,
+        pageIndex: 1
       }
       params = merge(params, this.menuBookParams)
       this.$http({
         url: this.$http.adornUrl('/books'),
-        params: this.$http.adornParams(params),
-        method: 'get'
+        data: this.$http.adornData(params),
+        method: 'post'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.bookList = data.page.list
+        if (data && data.success) {
+          this.bookList = data.result
           this.readingBookList = this.bookList.filter(book => {
             if (book.reading) {
               return book
@@ -97,22 +97,22 @@ export default {
     listBookNote () {
       let params = {
         categoryId: this.categoryId,
-        limit: this.pageSize,
-        page: this.currentPage
+        pageSize: this.pageSize,
+        pageIndex: this.currentPage
       }
       params = merge(params, this.menuBookNoteParams)
       this.$http({
         url: this.$http.adornUrl('/bookNotes'),
-        params: this.$http.adornParams(params),
-        method: 'get'
+        data: this.$http.adornData(params),
+        method: 'post'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          if (data.page.totalPage <= data.page.currPage) {
+        if (data && data.success) {
+          if (data.result.totalPage <= data.result.currPage) {
             this.noMoreData = true
           } else {
             this.noMoreData = false
           }
-          this.bookNoteList = data.page.list
+          this.bookNoteList = data.result.list
         }
       })
     },
@@ -121,11 +121,11 @@ export default {
       params.type = 1
       this.$http({
         url: this.$http.adornUrl('/operation/categories'),
-        method: 'get',
-        params: this.$http.adornParams(params)
+        method: 'post',
+        data: this.$http.adornData(params)
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.categoryList = treeDataTranslate(data.categoryList)
+        if (data && data.success) {
+          this.categoryList = treeDataTranslate(data.result)
         }
       })
     },
@@ -152,22 +152,22 @@ export default {
       this.currentPage++
       let params = {
         categoryId: this.categoryId,
-        limit: this.pageSize,
-        page: this.currentPage
+        pageSize: this.pageSize,
+        pageIndex: this.currentPage
       }
       params = merge(params, this.menuBookNoteParams)
       this.$http({
         url: this.$http.adornUrl('/bookNotes'),
-        params: this.$http.adornParams(params),
-        method: 'get'
+        data: this.$http.adornData(params),
+        method: 'post'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          if (data.page.totalPage <= data.page.currPage) {
+        if (data && data.success) {
+          if (data.result.totalPage <= data.result.currPage) {
             this.noMoreData = true
           } else {
             this.noMoreData = false
           }
-          this.bookNoteList = this.bookNoteList.concat(data.page.list)
+          this.bookNoteList = this.bookNoteList.concat(data.result.list)
         }
       }).then(response => {
         this.$refs.browseMore.stopLoading()

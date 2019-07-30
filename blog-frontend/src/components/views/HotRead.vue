@@ -60,8 +60,8 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.hotReadList = data.hotReadList
+        if (data && data.success) {
+          this.hotReadList = data.result
           this.topHotRead = this.hotReadList.shift()
         }
       })

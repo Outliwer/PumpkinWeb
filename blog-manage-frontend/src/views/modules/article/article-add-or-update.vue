@@ -129,14 +129,15 @@ export default {
   },
   methods: {
     init () {
+      this.url = this.$http.adornUrl(`/admin/oss/resource/upload?token=${this.$cookie.get('token')}`)
       // 获取博文分类
       this.$http({
         url: this.$http.adornUrl('/admin/operation/category/list'),
-        method: 'get',
-        params: this.$http.adornParams({type: 0})
+        method: 'post',
+        data: this.$http.adornData({type: 0})
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.categoryOptions = treeDataTranslate(data.categoryList)
+        if (data && data.success) {
+          this.categoryOptions = treeDataTranslate(data.result)
         }
       }).then(() => {
         this.$http({
@@ -144,12 +145,11 @@ export default {
           method: 'get',
           params: this.$http.adornParams({type: 0})
         }).then(({data}) => {
-          if (data && data.code === 200) {
-            this.tagList = data.tagList
+          if (data && data.success) {
+            this.tagList = data.result
           }
         })
       }).then(() => {
-        this.url = this.$http.adornUrl(`/admin/oss/resource/upload?token=${this.$cookie.get('token')}`)
         let id = this.$route.params.id
         if (id) {
           this.$http({
@@ -157,11 +157,11 @@ export default {
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.code === 200) {
-              this.article = data.article
-              this.file = [{url: data.article.cover}]
+            if (data && data.success) {
+              this.article = data.result
+              this.file = [{url: data.result.cover}]
               // 转换tagList
-              this.tagListSelect = this.article.tagList.map(tag => {
+              this.tagListSelect = this.result.tagList.map(tag => {
                 return tag.id
               })
               // 转换categoryId
@@ -198,9 +198,9 @@ export default {
     },
     // 上传成功
     successHandle (response) {
-      if (response && response.code === 200) {
-        this.article.cover = response.resource.url
-        this.file = [response.resource]
+      if (response && response.success) {
+        this.article.cover = response.result.url
+        this.file = [response.result]
         this.$message.success('上传成功！')
       }
     },
@@ -217,17 +217,17 @@ export default {
           this.article.categoryId = this.categoryOptionsSelect.join(',')
           this.$http({
             url: this.$http.adornUrl(`/admin/article/${!this.article.id ? 'save' : 'update'}`),
-            method: !this.article.id ? 'post' : 'put',
+            method: 'post',
             data: this.$http.adornData(this.article)
           }).then(({data}) => {
-            if (data && data.code === 200) {
+            if (data && data.success) {
               this.$message.success('保存博文成功')
               // 关闭当前标签
               this.$emit('closeCurrentTabs')
               // 跳转到list
               this.$router.push('/article-article')
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.errorMsg)
             }
           })
         } else {
@@ -246,7 +246,7 @@ export default {
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' }
       }).then(({data}) => {
-        this.$refs.md.$img2Url(pos, data.resource.url)
+        this.$refs.md.$img2Url(pos, data.result.url)
       })
     },
     mavonChangeHandle (context, render) {

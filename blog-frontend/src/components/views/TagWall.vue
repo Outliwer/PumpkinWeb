@@ -31,8 +31,8 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.tagList = data.tagList
+        if (data && data.success) {
+          this.tagList = data.result
         }
       })
     }

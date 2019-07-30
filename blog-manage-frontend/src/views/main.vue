@@ -68,10 +68,10 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        if (data && data.code === 200) {
+        if (data && data.success) {
           this.loading = false
-          this.userId = data.user.userId
-          this.userName = data.user.username
+          this.userId = data.result.userId
+          this.userName = data.result.username
         }
       })
     },
@@ -82,8 +82,8 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          localStorage.setItem('sysParamList', JSON.stringify(data.sysParamList))
+        if (data && data.success) {
+          localStorage.setItem('sysParamList', JSON.stringify(data.result))
         }
       })
     }

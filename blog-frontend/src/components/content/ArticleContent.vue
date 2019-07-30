@@ -1,26 +1,26 @@
 <template>
   <div class="article-content"  v-cloak>
-    <iv-row>
-      <iv-col :xs="24" :sm="24" :md="24" :lg="17">
-        <div class="layout-left">
-          <article-page-header :article="article"></article-page-header>
-          <article-page-content>
-            <article id="article-main-page" class="typo container" slot="content" ref="article" v-html="article.contentFormat">
-            </article>
-          </article-page-content>
-          <article-page-footer :likeNum="article.likeNum" :commentList="article.commentList"></article-page-footer>
-        </div>
-      </iv-col>
-      <iv-col :xs="0" :sm="0" :md="0" :lg="7">
-        <div class="layout-right">
-          <recommend></recommend>
-          <iv-affix :offset-top="60" >
-            <side-toc style="margin-top: 15px;"  ></side-toc>
-          </iv-affix>
-        </div>
-      </iv-col>
-    </iv-row>
-  </div>
+      <iv-row>
+        <iv-col :xs="24" :sm="24" :md="24" :lg="18">
+          <div class="layout-left">
+            <article-page-header :article="article"></article-page-header>
+            <article-page-content>
+              <article id="article-main-page" class="typo container" slot="content" ref="article" v-html="article.contentFormat">
+              </article>
+            </article-page-content>
+            <article-page-footer :likeNum="article.likeNum" :commentList="article.commentList"></article-page-footer>
+          </div>
+        </iv-col>
+        <iv-col :xs="0" :sm="0" :md="0" :lg="6">
+          <div class="layout-right">
+            <recommend></recommend>
+            <iv-affix :offset-top="60" >
+              <side-toc style="margin-top: 15px;"  ></side-toc>
+            </iv-affix>
+          </div>
+        </iv-col>
+      </iv-row>
+    </div>
 </template>
 <script type="text/ecmascript-6">
 import ArticlePageHeader from '@/components/views/Article/ArticlePageHeader'
@@ -37,7 +37,6 @@ import hljs from 'highlight.js'
 import 'highlight.js/styles/solarized-light.css'
 // TOC滚动监听
 import TocScrollSpy from '@/common/js/TocScrollSpy'
-
 var HLJS = hljs
 
 export default {
@@ -73,8 +72,8 @@ export default {
         url: this.$http.adornUrl('/article/' + articleId),
         method: 'get'
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.article = data.article
+        if (data && data.success) {
+          this.article = data.result
           // 更新目录、高亮代码
           this.$nextTick(function () {
             this.addCodeLineNumber()

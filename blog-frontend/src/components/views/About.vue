@@ -2,10 +2,10 @@
   <div class="about">
     <img class="background" src="../../assets/background.jpg" alt="">
     <img class="avatar" src="../../assets/avatar.png" alt="">
-    <p class="name">Bobbi</p>
-    <p class="desc">Write the code, Change the World</p>
+    <p class="name">竹马</p>
+    <p class="desc">Stay hungry, Stay foolish.</p>
     <ul class="social">
-      <li><a href="https://github.com/llldddbbb" target="_blank"><img src="../../assets/icon/GitHub.png" alt=""></a></li>
+      <li><a href="https://github.com/Outliwer" target="_blank"><img src="../../assets/icon/GitHub.png" alt=""></a></li>
     </ul>
     <div class="line"></div>
     <h4>技能值</h4>
@@ -15,7 +15,7 @@
           <p class="title">Java</p>
         </iv-col>
         <iv-col :span="18">
-          <iv-progress status="normal" :hide-info="true" :stroke-width="8" :percent="60" class="bar"></iv-progress>
+          <iv-progress status="normal" :hide-info="true" :stroke-width="8" :percent="70" class="bar"></iv-progress>
         </iv-col>
       </iv-row>
       <iv-row :gutter="20">
@@ -23,23 +23,7 @@
           <p class="title">Vue</p>
         </iv-col>
         <iv-col :span="18">
-          <iv-progress status="wrong" :hide-info="true" :stroke-width="8" :percent="40" class="bar"></iv-progress>
-        </iv-col>
-      </iv-row>
-      <iv-row :gutter="20">
-        <iv-col :span="6">
-          <p class="title">Go</p>
-        </iv-col>
-        <iv-col :span="18">
-          <iv-progress status="success" :hide-info="true" :stroke-width="8" :percent="10" class="bar"></iv-progress>
-        </iv-col>
-      </iv-row>
-      <iv-row :gutter="20">
-        <iv-col :span="6">
-          <p class="title">Cloud</p>
-        </iv-col>
-        <iv-col :span="18">
-          <iv-progress status="active" :hide-info="true" :stroke-width="8" :percent="30" class="bar"></iv-progress>
+          <iv-progress status="wrong" :hide-info="true" :stroke-width="8" :percent="20" class="bar"></iv-progress>
         </iv-col>
       </iv-row>
     </div>

@@ -7,6 +7,11 @@
         </el-select>
       </el-form-item>
       <el-form-item>
+        <el-col :span="18">
+          <el-input placeholder="标题" v-model="dataForm.title"  clearable></el-input>
+        </el-col>
+      </el-form-item>
+      <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('comment:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <el-button v-if="isAuth('comment:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
@@ -49,7 +54,7 @@
         label="关联父Id">
     </el-table-column>
     <el-table-column
-        prop="articleId"
+        prop="linkId"
         header-align="center"
         align="center"
         label="关联文章Id">
@@ -74,6 +79,7 @@
     </el-table-column>
     <el-table-column
         prop="createTime"
+        :formatter="this.createDateFormat"
         header-align="center"
         align="center"
         label="创建时间">
@@ -106,6 +112,7 @@
 
 <script>
 import AddOrUpdate from './comment-add-or-update'
+import { dateFormat } from '@/utils'
 export default {
   data () {
     return {
@@ -134,16 +141,17 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/admin/comment/list'),
-        method: 'get',
-        params: this.$http.adornParams({
-          'page': this.pageIndex,
-          'limit': this.pageSize,
-          'type': this.dataForm.type
+        method: 'post',
+        data: this.$http.adornData({
+          'pageIndex': this.pageIndex,
+          'pageSize': this.pageSize,
+          'type': this.dataForm.type,
+          'title': this.dataForm.title
         })
       }).then(({data}) => {
-        if (data && data.code === 200) {
-          this.dataList = data.page.list
-          this.totalPage = data.page.totalCount
+        if (data && data.success) {
+          this.dataList = data.result.commentList
+          this.totalPage = data.result.totalCount
         } else {
           this.dataList = []
           this.totalPage = 0
@@ -166,6 +174,9 @@ export default {
     selectionChangeHandle (val) {
       this.dataListSelections = val
     },
+    createDateFormat (row, column) {
+      return dateFormat(row.createTime)
+    },
     // 新增 / 修改
     addOrUpdateHandle (id) {
       this.addOrUpdateVisible = true
@@ -185,10 +196,10 @@ export default {
       }).then(() => {
         this.$http({
           url: this.$http.adornUrl('/admin/comment/delete'),
-          method: 'delete',
+          method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({data}) => {
-          if (data && data.code === 200) {
+          if (data && data.success) {
             this.$message({
               message: '操作成功',
               type: 'success',
@@ -198,7 +209,7 @@ export default {
               }
             })
           } else {
-            this.$message.error(data.msg)
+            this.$message.error(data.errorMsg)
           }
         })
       })

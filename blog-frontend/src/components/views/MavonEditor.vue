@@ -1,55 +1,44 @@
 <template>
   <div id="mavon-editor" :class="theme">
     <div class="operate">
-      <iv-row :gutter="15">
-        <iv-col :xs="8" :sm="8" :md="6" :lg="6">
-          <iv-input v-model="name" placeholder="请输入您的昵称" size="large">
-            <span slot="prepend">昵称 </span>
-          </iv-input>
-        </iv-col>
-        <iv-col :xs="16" :sm="16" :md="12" :lg="11">
-          <iv-input v-model="email" placeholder="联系方式（邮箱或手机号）以评论" size="large">
-            <iv-select v-model="select" slot="prepend" style="width: 80px">
-              <iv-option value="email">邮箱 </iv-option>
-              <iv-option value="mobile">手机号 </iv-option>
-            </iv-select>
-          </iv-input>
-        </iv-col>
-        <!--<iv-col :xs="24" :sm="24" :md="6" :lg="7" class-name="iv-dropdown-link">-->
-          <!--<iv-dropdown>-->
-            <!--<iv-icon type="log-in"></iv-icon> 或登录以评论 <iv-icon type="arrow-down-b"></iv-icon>-->
-            <!--<iv-dropdown-menu slot="list">-->
-              <!--<iv-dropdown-item>菜单</iv-dropdown-item>-->
-              <!--<iv-dropdown-item>菜单</iv-dropdown-item>-->
-              <!--<iv-dropdown-item>菜单</iv-dropdown-item>-->
-              <!--<iv-dropdown-item disabled>菜单</iv-dropdown-item>-->
-              <!--<iv-dropdown-item divided>菜单</iv-dropdown-item>-->
-            <!--</iv-dropdown-menu>-->
-          <!--</iv-dropdown>-->
-        <!--</iv-col>-->
-      </iv-row>
-    </div>
-    <div class="editor-area">
-      <iv-spin size="large" v-if="!editable" fix style="z-index: 1001;">
-        该文章已关闭评论
-      </iv-spin>
-      <mavon-editor class="editor-area"
-                    style="height: 100%; min-height: 50px; min-width: 200px; z-index: 9;"
-                    :toolbarsFlag="toolbarsFlag"
-                    :subfield="subfield"
-                    :placeholder="placeholder"
-                    :toolbars="toolbars"
-                    :editable="editable"
-                    v-if="editable"
-                    @change="change"></mavon-editor>
-    </div>
-    <div class="bottom-area">
-      <div class="comment-tip">
-        <a href="https://guides.github.com/features/mastering-markdown/" target="_blank"><iv-icon
-          type="information-circled"></iv-icon> 支持MarkDown</a>
-      </div>
-      <div class="buttons">
-        <iv-button size="default" @click="publish" :type="buttonType"  :disabled="!editable">发布</iv-button>
+      <div class="editor-area">
+        <el-form :model="newComment" label-width="0px" ref="commentForm">
+          <el-form-item>
+            <iv-row :gutter="15">
+              <iv-col :xs="8" :sm="8" :md="6" :lg="6">
+                <iv-input v-model="newComment.name" placeholder="请输入您的昵称" size="large">
+                  <span slot="prepend">昵称 </span>
+                </iv-input>
+              </iv-col>
+              <iv-col :xs="16" :sm="16" :md="12" :lg="11">
+                <iv-input v-model="newComment.email" placeholder="联系方式以评论" size="large">
+                  <span slot="prepend">邮箱 </span>
+                </iv-input>
+              </iv-col>
+            </iv-row>
+          </el-form-item>
+          &nbsp;
+          <el-form-item>
+            <iv-row :gutter="15">
+              <iv-col :xs="16" :sm="16" :md="12" :lg="11">
+              <iv-input v-model="newComment.content" placeholder="评论文章" size="large">
+                <span slot="prepend">评论 </span>
+              </iv-input>
+              </iv-col>
+              <iv-col :xs="16" :sm="8" :md="6" :lg="6">
+                <iv-button size="large" @click="publish" :type="buttonType" :disabled="editable">发布</iv-button>
+              </iv-col>
+            </iv-row>
+<!--            <mavon-editor class="editor-area"-->
+<!--                          style="height: 100%; min-height: 50px; min-width: 200px; z-index: 9; max-height: 200px;"-->
+<!--                          :toolbarsFlag="toolbarsFlag"-->
+<!--                          :subfield="subfield"-->
+<!--                          :placeholder="placeholder"-->
+<!--                          :toolbars="toolbars"-->
+<!--                          :editable="editable"-->
+<!--                          v-model="comment.content"></mavon-editor>-->
+          </el-form-item>
+        </el-form>
       </div>
     </div>
   </div>
@@ -58,6 +47,7 @@
 <script type="text/ecmascript-6">
 import MavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+
 export default {
   props: {
     theme: {
@@ -65,22 +55,23 @@ export default {
       default: ''
     },
     subfield: {
-      default: false
+      default: true
     },
     placeholder: {
       default: '输入评论内容...'
     },
     toolbarsFlag: {
-      default: false
+      default: true
     },
-    editable: false
+    editable: true
   },
   data () {
     return {
-      name: '',
-      select: 'email',
-      email: '',
-      mobile: '',
+      newComment: {
+        content: '',
+        name: '',
+        email: ''
+      },
       valueChanged: false,
       toolbars: {
         bold: true, // 粗体
@@ -164,7 +155,37 @@ export default {
       }
     },
     publish () {
-      console.log('publish')
+      if (this.newComment.name === null || this.newComment.name === '') {
+        this.$Message.error('昵称不能为空')
+      } else if (this.newComment.email === null || this.newComment.email === '') {
+        this.$Message.error('邮箱不能为空')
+      } else {
+        this.newComment.commentLevel = 0
+        if (this.$route.params.bookId) {
+          this.newComment.linkId = this.$route.params.bookId
+          this.newComment.type = 1
+        }
+        if (this.$route.params.bookNoteId) {
+          this.newComment.linkId = this.$route.params.bookNoteId
+          this.newComment.type = 2
+        }
+        if (this.$route.params.articleId) {
+          this.newComment.linkId = this.$route.params.articleId
+          this.newComment.type = 0
+        }
+        this.$http({
+          url: this.$http.adornUrl('/comment/save'),
+          data: this.$http.adornData(this.newComment),
+          method: 'post'
+        }).then(({data}) => {
+          if (data && data.success) {
+            this.$Message.success('评论成功')
+            location.reload()
+          } else {
+            this.$Message.error('评论失败')
+          }
+        })
+      }
     }
   },
   mounted () {
@@ -184,8 +205,10 @@ export default {
     width 100%
     display flex
     flex-direction column
+
     .operate
       margin-bottom 15px
+
       .iv-dropdown-link
         display block
         height 36px
@@ -193,8 +216,10 @@ export default {
         text-align right
         font-size 15px
         color $color-main-primary
+
         &:hover
           cursor pointer
+
     .editor-area
       position relative
       flex 1
@@ -202,15 +227,18 @@ export default {
       height 100%
       min-height 50px
       min-width 200px
+
     .bottom-area
       flex 0 0 40px
       height 40px
       display flex
       padding-top 15px
       justify-content: space-between
+
     &.dark-theme
       .operate
         margin-bottom 15px
+
         .iv-dropdown-link
           display block
           height 36px
@@ -218,14 +246,17 @@ export default {
           text-align right
           font-size 15px
           color $color-gradually-gray-61
+
           &:hover
             color $color-secondary-warning
             border-bottom 2px solid $color-secondary-warning
             cursor pointer
+
       .bottom-area
         .comment-tip
           a
             color $color-gradually-gray-61
+
             &:hover
               color $color-secondary-warning
 
